@@ -263,6 +263,18 @@ impl pallet_sudo::Config for Runtime {
 	type Call = Call;
 }
 
+parameter_types! {
+	pub const MaxRequests: u32 = 50;
+	pub const HeadersToKeep: u32 = 50;
+}
+
+impl pallet_bridge_grandpa::Config for Runtime {
+	type BridgedChain = bp_millau::Millau;
+	type MaxRequests = MaxRequests;
+	type HeadersToKeep = HeadersToKeep;
+	type WeightInfo = ();
+}
+
 // Create the runtime by composing the FRAME pallets that were previously configured.
 construct_runtime!(
 	pub enum Runtime where
@@ -278,6 +290,7 @@ construct_runtime!(
 		Balances: pallet_balances::{Pallet, Call, Storage, Config<T>, Event<T>},
 		TransactionPayment: pallet_transaction_payment::{Pallet, Storage},
 		Sudo: pallet_sudo::{Pallet, Call, Config<T>, Storage, Event<T>},
+		BridgeMillau: pallet_bridge_grandpa::{Pallet, Call, Config<T>, Storage},
 	}
 );
 
@@ -421,6 +434,17 @@ impl_runtime_apis! {
 	impl frame_system_rpc_runtime_api::AccountNonceApi<Block, AccountId, Index> for Runtime {
 		fn account_nonce(account: AccountId) -> Index {
 			System::account_nonce(account)
+		}
+	}
+
+	impl bp_millau::MillauFinalityApi<Block> for Runtime {
+		fn best_finalized() -> (bp_millau::BlockNumber, bp_millau::Hash) {
+			let header = BridgeMillau::best_finalized();
+			(header.number, header.hash())
+		}
+
+		fn is_known_header(hash: bp_millau::Hash) -> bool {
+			BridgeMillau::is_known_header(hash)
 		}
 	}
 

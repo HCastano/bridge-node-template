@@ -141,6 +141,16 @@ git = "https://github.com/paritytech/substrate"
 branch = "master"
 default-features = false
 
+[dependencies.pallet-bridge-grandpa]
+git = "https://github.com/paritytech/parity-bridges-common"
+branch = "master"
+default-features = false
+
+[dependencies.bp-millau]
+git = "https://github.com/paritytech/parity-bridges-common"
+branch = "master"
+default-features = false
+
 [dependencies]
 codec = { default-features = false, features = ['derive'], package = 'parity-scale-codec', version = '2.0.0' }
 hex-literal = { optional = true, version = '0.3.1' }
@@ -159,6 +169,7 @@ runtime-benchmarks = [
     'sp-runtime/runtime-benchmarks',
 ]
 std = [
+    'bp-millau/std',
     'codec/std',
     'frame-executive/std',
     'frame-support/std',
@@ -166,6 +177,7 @@ std = [
     'frame-system/std',
     'pallet-aura/std',
     'pallet-balances/std',
+    'pallet-bridge-grandpa/std',
     'pallet-grandpa/std',
     'pallet-randomness-collective-flip/std',
     'pallet-sudo/std',
